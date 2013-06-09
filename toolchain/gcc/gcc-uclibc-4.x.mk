@@ -228,6 +228,10 @@ ifeq ($(BR2_TOOLCHAIN_BUILDROOT),y)
 HOST_SOURCE+=gcc-source
 endif
 
+ifeq ($(BR2_BINFMT_FLAT),y)
+TARGET_CFLAGS += -Wl,-elf2flt -DBR_BINFMT_FLAT
+endif
+
 $(DL_DIR)/$(GCC_SOURCE):
 	mkdir -p $(DL_DIR)
 	$(Q)$(call MESSAGE,"Downloading gcc")
