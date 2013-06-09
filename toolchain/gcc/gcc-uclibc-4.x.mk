@@ -613,6 +613,9 @@ $(TARGET_DIR)/usr/bin/gcc: $(GCC_BUILD_DIR4)/.compiled
 	# Remove broken specs file (cross compile flag is set).
 	rm -f $(TARGET_DIR)/usr/$(GCC_LIB_SUBDIR)/specs
 
+	echo -e '*startfile:\ncrtbegin.o' >> $(TARGET_DIR)/usr/$(GCC_LIB_SUBDIR)/specs
+	echo -e '*endfile:\ncrtend.o' >> $(TARGET_DIR)/usr/$(GCC_LIB_SUBDIR)/specs
+
 	# Remove useless copies of gcc, c++, g++
 	rm -f $(TARGET_DIR)/usr/bin/$(GNU_TARGET_NAME)-gcc*
 	rm -f $(TARGET_DIR)/usr/bin/$(GNU_TARGET_NAME)-g++*
