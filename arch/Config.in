@@ -192,15 +192,22 @@ config BR2_GCC_TARGET_CPU
 config BR2_GCC_TARGET_CPU_REVISION
 	string
 
+config BR2_USE_MMU
+	bool "Enable MMU support" if BR2_arm || BR2_armeb || BR2_mips || BR2_mipsel || BR2_sh || BR2_xtensa
+	default y if !BR2_bfin && !BR2_m68k && !BR2_arm7tdmi
+	help
+	  If your target has a MMU, you should say Y here.  If you
+	  are unsure, just say Y.
+
 # Set up target binary format
 choice
 	prompt "Target Binary Format"
-	depends on BR2_bfin || BR2_m68k
-	default BR2_BINFMT_FDPIC
+	default BR2_BINFMT_FDPIC if BR2_USE_MMU
+	default BR2_BINFMT_FDPIC if !BR2_USE_MMU
 
 config BR2_BINFMT_ELF
 	bool "ELF"
-	depends on !BR2_bfin && !BR2_m68k
+	depends on BR2_USE_MMU
 	help
 	  ELF (Executable and Linkable Format) is a format for libraries and
 	  executables used across different architectures and operating
@@ -208,7 +215,7 @@ config BR2_BINFMT_ELF
 
 config BR2_BINFMT_FDPIC
 	bool "FDPIC"
-	depends on BR2_bfin || BR2_m68k
+	depends on !BR2_USE_MMU
 	help
 	  ELF FDPIC binaries are based on ELF, but allow the individual load
 	  segments of a binary to be located in memory independently of each
@@ -217,8 +224,9 @@ config BR2_BINFMT_FDPIC
 
 config BR2_BINFMT_FLAT
 	bool "FLAT"
-	depends on BR2_bfin || BR2_m68k
+	depends on !BR2_USE_MMU
 	select BR2_PREFER_STATIC_LIB
+	select BR2_ELF2FLT
 	help
 	  FLAT binary is a relatively simple and lightweight executable format
 	  based on the original a.out format. It is widely used in environment
@@ -248,7 +256,7 @@ config BR2_BINFMT_FLAT_SHARED
 	bool "Shared binary"
 	depends on BR2_bfin || BR2_m68k
 	help
-	  Allow to load and link indiviual FLAT binaries at run time.
+	  Allow to load and link individual FLAT binaries at run time.
 
 endchoice
 

@@ -314,6 +314,18 @@ ifeq ($(BR2_PTHREAD_DEBUG),y)
 else
 	echo "# PTHREADS_DEBUG_SUPPORT is not set" >> $(UCLIBC_DIR)/.oldconfig
 endif
+ifneq ($(BR2_USE_MMU),y)
+	$(SED) 's,^.*ARCH_HAS_MMU.*,ARCH_HAS_MMU=n,g' $(UCLIBC_DIR)/.oldconfig
+	$(SED) 's,^.*ARCH_USE_MMU.*,ARCH_USE_MMU=n,g' $(UCLIBC_DIR)/.oldconfig
+	echo "# UCLIBC_FORMAT_ELF is not set" >> $(UCLIBC_DIR)/.oldconfig
+	echo "# UCLIBC_FORMAT_FDPIC_ELF is not set" >> $(UCLIBC_DIR)/.oldconfig
+	echo "# UCLIBC_FORMAT_DSBT_ELF is not set" >> $(UCLIBC_DIR)/.oldconfig
+	echo "UCLIBC_FORMAT_FLAT=y" >> $(UCLIBC_DIR)/.oldconfig
+	echo "# UCLIBC_FORMAT_FLAT_SEP_DATA is not set" >> $(UCLIBC_DIR)/.oldconfig
+	echo "# UCLIBC_FORMAT_SHARED_FLAT is not set" >> $(UCLIBC_DIR)/.oldconfig
+	# Can't use ctor/dtor when ELF is not in use
+	$(SED) 's,^.*UCLIBC_CTOR_DTOR.*,UCLIBC_CTOR_DTOR=n,g' $(UCLIBC_DIR)/.oldconfig
+endif
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT_LOCALE),y)
 	$(SED) 's,^.*UCLIBC_HAS_LOCALE.*,UCLIBC_HAS_LOCALE=y\n# UCLIBC_BUILD_ALL_LOCALE is not set\nUCLIBC_BUILD_MINIMAL_LOCALE=y\nUCLIBC_BUILD_MINIMAL_LOCALES="$(UCLIBC_LOCALES)"\nUCLIBC_PREGENERATED_LOCALE_DATA=n\nUCLIBC_DOWNLOAD_PREGENERATED_LOCALE_DATA=n\nUCLIBC_HAS_XLOCALE=y\nUCLIBC_HAS_GLIBC_DIGIT_GROUPING=n\n,g' $(UCLIBC_DIR)/.oldconfig
 else
