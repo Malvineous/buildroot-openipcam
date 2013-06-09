@@ -122,6 +122,15 @@ EXTRA_GCC_CONFIG_OPTIONS +=  \
 	--with-long-double-128
 endif
 
+# Disable threading when thread implementation is 'none'
+ifeq ($(BR2_PTHREADS_NONE),y)
+EXTRA_GCC_CONFIG_OPTIONS += \
+	--enable-threads=single \
+	--disable-libitm \
+	--disable-libatomic \
+	--disable-libmudflap
+endif
+
 # End with user-provided options, so that they can override previously
 # defined options.
 EXTRA_GCC_CONFIG_OPTIONS += \
